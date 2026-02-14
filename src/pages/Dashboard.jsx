@@ -1,11 +1,14 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import jobs from '../data/jobs'
 import JobCard from '../components/JobCard'
 import JobModal from '../components/JobModal'
 import FilterBar from '../components/FilterBar'
+import { computeMatchScore, loadPreferences, extractSalaryNumeric } from '../utils/matchEngine'
 
 function Dashboard() {
     const [selectedJob, setSelectedJob] = useState(null)
+    const [showOnlyMatches, setShowOnlyMatches] = useState(false)
     const [savedIds, setSavedIds] = useState(() => {
         try {
             return JSON.parse(localStorage.getItem('savedJobs')) || []
@@ -23,17 +26,31 @@ function Dashboard() {
         sort: 'latest',
     })
 
-    const toggleSave = (id) => {
+    const preferences = useMemo(() => loadPreferences(), [])
+
+    const toggleSave = useCallback((id) => {
         setSavedIds(prev => {
             const next = prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
             localStorage.setItem('savedJobs', JSON.stringify(next))
             return next
         })
-    }
+    }, [])
+
+    const scoredJobs = useMemo(() => {
+        return jobs.map(job => {
+            const result = computeMatchScore(job, preferences)
+            return {
+                ...job,
+                matchScore: result ? result.score : null,
+                matchBreakdown: result ? result.breakdown : [],
+            }
+        })
+    }, [preferences])
 
     const filteredJobs = useMemo(() => {
-        let result = [...jobs]
+        let result = [...scoredJobs]
 
+        // Keyword filter (AND)
         if (filters.keyword) {
             const kw = filters.keyword.toLowerCase()
             result = result.filter(j =>
@@ -42,30 +59,47 @@ function Dashboard() {
             )
         }
 
+        // Location filter (AND)
         if (filters.location) {
             result = result.filter(j => j.location === filters.location)
         }
 
+        // Mode filter (AND)
         if (filters.mode) {
             result = result.filter(j => j.mode === filters.mode)
         }
 
+        // Experience filter (AND)
         if (filters.experience) {
             result = result.filter(j => j.experience === filters.experience)
         }
 
+        // Source filter (AND)
         if (filters.source) {
             result = result.filter(j => j.source === filters.source)
         }
 
+        // Match threshold filter
+        if (showOnlyMatches && preferences) {
+            const threshold = preferences.minMatchScore ?? 40
+            result = result.filter(j => j.matchScore !== null && j.matchScore >= threshold)
+        }
+
+        // Sorting
         if (filters.sort === 'latest') {
             result.sort((a, b) => a.postedDaysAgo - b.postedDaysAgo)
-        } else {
+        } else if (filters.sort === 'oldest') {
             result.sort((a, b) => b.postedDaysAgo - a.postedDaysAgo)
+        } else if (filters.sort === 'score') {
+            result.sort((a, b) => (b.matchScore ?? -1) - (a.matchScore ?? -1))
+        } else if (filters.sort === 'salary') {
+            result.sort((a, b) => extractSalaryNumeric(b.salaryRange) - extractSalaryNumeric(a.salaryRange))
         }
 
         return result
-    }, [filters])
+    }, [scoredJobs, filters, showOnlyMatches, preferences])
+
+    const hasPreferences = preferences !== null
 
     return (
         <div className="page-shell">
@@ -74,12 +108,34 @@ function Dashboard() {
                 <p className="page-subtitle">Your matched jobs appear here, refreshed daily.</p>
             </div>
             <div className="page-body">
+                {/* Preferences Banner */}
+                {!hasPreferences && (
+                    <div className="prefs-banner" id="prefs-banner">
+                        <div className="prefs-banner-content">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
+                                <path d="M10 6v5M10 13.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            </svg>
+                            <div>
+                                <strong>Set your preferences to activate intelligent matching.</strong>
+                                <span> Jobs will be scored based on your role, location, mode, experience, and skills.</span>
+                            </div>
+                        </div>
+                        <Link to="/settings" className="btn btn-primary btn-sm">Set Preferences</Link>
+                    </div>
+                )}
+
+                {/* Filter Bar with Match Toggle */}
                 <FilterBar
                     filters={filters}
                     onFilterChange={setFilters}
                     jobCount={filteredJobs.length}
+                    hasPreferences={hasPreferences}
+                    showOnlyMatches={showOnlyMatches}
+                    onToggleMatches={() => setShowOnlyMatches(prev => !prev)}
                 />
 
+                {/* Job Grid */}
                 <div className="job-grid">
                     {filteredJobs.map(job => (
                         <JobCard
@@ -88,10 +144,13 @@ function Dashboard() {
                             onView={setSelectedJob}
                             onSave={toggleSave}
                             isSaved={savedIds.includes(job.id)}
+                            matchScore={job.matchScore}
+                            matchBreakdown={job.matchBreakdown}
                         />
                     ))}
                 </div>
 
+                {/* Empty states */}
                 {filteredJobs.length === 0 && (
                     <div className="empty-state-card">
                         <div className="empty-state-icon-wrap">
@@ -100,9 +159,14 @@ function Dashboard() {
                                 <path d="M31 27l8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                             </svg>
                         </div>
-                        <h3 className="empty-state-title">No matching jobs</h3>
+                        <h3 className="empty-state-title">
+                            {showOnlyMatches ? 'No roles match your criteria' : 'No matching jobs'}
+                        </h3>
                         <p className="empty-state-text">
-                            Try adjusting your filters or broadening your search criteria.
+                            {showOnlyMatches
+                                ? 'Adjust your filters or lower your match threshold in Settings.'
+                                : 'Try adjusting your filters or broadening your search criteria.'
+                            }
                         </p>
                     </div>
                 )}

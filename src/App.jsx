@@ -12,6 +12,7 @@ import './styles/components.css'
 import './styles/navigation.css'
 import './styles/pages.css'
 import './styles/jobs.css'
+import './styles/scoring.css'
 
 function App() {
   return (

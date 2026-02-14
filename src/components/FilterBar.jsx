@@ -1,4 +1,4 @@
-function FilterBar({ filters, onFilterChange, jobCount }) {
+function FilterBar({ filters, onFilterChange, jobCount, hasPreferences, showOnlyMatches, onToggleMatches }) {
     const handleChange = (e) => {
         onFilterChange({ ...filters, [e.target.name]: e.target.value })
     }
@@ -21,7 +21,23 @@ function FilterBar({ filters, onFilterChange, jobCount }) {
                         onChange={handleChange}
                     />
                 </div>
-                <span className="filter-count">{jobCount} jobs found</span>
+                <div className="filter-bar-right">
+                    {hasPreferences && (
+                        <label className="match-toggle" id="match-toggle">
+                            <input
+                                type="checkbox"
+                                className="match-toggle-input"
+                                checked={showOnlyMatches}
+                                onChange={onToggleMatches}
+                            />
+                            <span className="match-toggle-track">
+                                <span className="match-toggle-thumb"></span>
+                            </span>
+                            <span className="match-toggle-label">Show only matches</span>
+                        </label>
+                    )}
+                    <span className="filter-count">{jobCount} jobs</span>
+                </div>
             </div>
 
             <div className="filter-bar-row">
@@ -63,6 +79,8 @@ function FilterBar({ filters, onFilterChange, jobCount }) {
                 <select className="filter-select" id="filter-sort" name="sort" value={filters.sort} onChange={handleChange}>
                     <option value="latest">Latest First</option>
                     <option value="oldest">Oldest First</option>
+                    {hasPreferences && <option value="score">Match Score</option>}
+                    <option value="salary">Salary (High→Low)</option>
                 </select>
             </div>
         </div>

@@ -1,4 +1,6 @@
-function JobCard({ job, onView, onSave, isSaved }) {
+import { getScoreTier } from '../utils/matchEngine'
+
+function JobCard({ job, onView, onSave, isSaved, matchScore, matchBreakdown }) {
     const daysLabel = job.postedDaysAgo === 0
         ? 'Today'
         : job.postedDaysAgo === 1
@@ -11,6 +13,8 @@ function JobCard({ job, onView, onSave, isSaved }) {
             ? 'badge-warning'
             : 'badge-neutral'
 
+    const scoreTier = matchScore !== null ? getScoreTier(matchScore) : null
+
     return (
         <div className="job-card" id={`job-card-${job.id}`}>
             <div className="job-card-header">
@@ -18,7 +22,14 @@ function JobCard({ job, onView, onSave, isSaved }) {
                     <h3 className="job-card-title">{job.title}</h3>
                     <span className="job-card-company">{job.company}</span>
                 </div>
-                <span className={`badge ${sourceClass}`}>{job.source}</span>
+                <div className="job-card-badges">
+                    {scoreTier && (
+                        <span className={`score-badge score-badge--${scoreTier}`} title={`Match Score: ${matchScore}%`}>
+                            {matchScore}%
+                        </span>
+                    )}
+                    <span className={`badge ${sourceClass}`}>{job.source}</span>
+                </div>
             </div>
 
             <div className="job-card-meta">

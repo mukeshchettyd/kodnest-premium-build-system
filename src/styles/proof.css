@@ -1,0 +1,278 @@
+/* ========================================================================
+   KodNest Premium — Test Checklist & Ship Lock Styles
+   ======================================================================== */
+
+/* ================================================================
+   TEST SUMMARY CARD
+   ================================================================ */
+.test-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-24);
+    padding: var(--space-24);
+    background-color: var(--color-card-bg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-16);
+}
+
+.test-summary--pass {
+    border-color: rgba(59, 122, 87, 0.3);
+    background-color: rgba(59, 122, 87, 0.03);
+}
+
+.test-summary-score {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.test-summary-number {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1;
+}
+
+.test-summary--pass .test-summary-number {
+    color: var(--color-success);
+}
+
+.test-summary-divider {
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+    margin: 0 2px;
+}
+
+.test-summary-total {
+    font-size: var(--text-lg);
+    color: var(--color-muted);
+    font-weight: 500;
+}
+
+.test-summary-info {
+    flex: 1;
+}
+
+.test-summary-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+}
+
+.test-summary--pass .test-summary-title {
+    color: var(--color-success);
+}
+
+.test-summary-text {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+}
+
+/* ================================================================
+   PROGRESS BAR
+   ================================================================ */
+.test-progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--color-border);
+    border-radius: 2px;
+    margin-bottom: var(--space-24);
+    overflow: hidden;
+}
+
+.test-progress-fill {
+    height: 100%;
+    background-color: var(--color-accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+}
+
+/* ================================================================
+   TEST CHECKLIST
+   ================================================================ */
+.test-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background-color: var(--color-card-bg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: var(--space-16);
+}
+
+.test-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-12);
+    padding: var(--space-16) var(--space-24);
+    border-bottom: var(--border-width) solid var(--color-border);
+    transition: background-color var(--transition-fast);
+}
+
+.test-item:last-child {
+    border-bottom: none;
+}
+
+.test-item:hover {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+.test-item--checked {
+    background-color: rgba(59, 122, 87, 0.02);
+}
+
+.test-item-checkbox {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--color-border);
+    margin-top: 2px;
+    transition: color var(--transition-fast);
+}
+
+.test-item--checked .test-item-checkbox {
+    color: var(--color-success);
+}
+
+.test-item-checkbox:hover {
+    color: var(--color-text);
+}
+
+.test-item--checked .test-item-checkbox:hover {
+    color: var(--color-success);
+}
+
+.test-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.test-item-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.test-item-index {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    font-weight: 500;
+    min-width: 20px;
+}
+
+.test-item-label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+}
+
+.test-item-label--done {
+    text-decoration: line-through;
+    color: var(--color-muted);
+}
+
+.test-item-hint {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+    opacity: 0.7;
+    margin-top: var(--space-4);
+    padding-left: 28px;
+    line-height: var(--leading-normal);
+}
+
+/* ================================================================
+   TEST ACTIONS
+   ================================================================ */
+.test-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-32);
+}
+
+/* ================================================================
+   SHIP CARD
+   ================================================================ */
+.ship-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-48) var(--space-32);
+    background-color: var(--color-card-bg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    gap: var(--space-16);
+}
+
+.ship-card--unlocked {
+    border-color: rgba(59, 122, 87, 0.3);
+    background-color: rgba(59, 122, 87, 0.02);
+}
+
+.ship-card--locked {
+    opacity: 0.7;
+}
+
+.ship-card-icon {
+    color: var(--color-muted);
+}
+
+.ship-card-icon--unlock {
+    color: var(--color-success);
+}
+
+.ship-card-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.ship-card--unlocked .ship-card-title {
+    color: var(--color-success);
+}
+
+.ship-card-text {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    max-width: 440px;
+    line-height: var(--leading-normal);
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 768px) {
+    .test-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-16);
+    }
+
+    .test-summary-number {
+        font-size: 2rem;
+    }
+
+    .test-item {
+        padding: var(--space-12) var(--space-16);
+    }
+
+    .test-item-hint {
+        padding-left: 0;
+    }
+
+    .ship-card {
+        padding: var(--space-32) var(--space-24);
+    }
+}

@@ -15,6 +15,7 @@ import './styles/jobs.css'
 import './styles/scoring.css'
 import './styles/digest.css'
 import './styles/status.css'
+import './styles/proof.css'
 
 function App() {
   return (

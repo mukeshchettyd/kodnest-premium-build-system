@@ -1,60 +1,218 @@
+import { useState, useMemo } from 'react'
+
+const TEST_ITEMS = [
+    {
+        id: 'prefs-persist',
+        label: 'Preferences persist after refresh',
+        hint: 'Go to Settings → save preferences → refresh → verify fields are prefilled.',
+    },
+    {
+        id: 'match-score',
+        label: 'Match score calculates correctly',
+        hint: 'Set preferences, go to Dashboard → verify scores appear on cards with correct color tiers.',
+    },
+    {
+        id: 'match-toggle',
+        label: '"Show only matches" toggle works',
+        hint: 'Enable toggle on Dashboard → only jobs above your threshold should remain visible.',
+    },
+    {
+        id: 'save-persist',
+        label: 'Save job persists after refresh',
+        hint: 'Save a job on Dashboard → refresh → go to Saved → verify the job is still there.',
+    },
+    {
+        id: 'apply-tab',
+        label: 'Apply opens in new tab',
+        hint: 'Click "Apply" on any job card → verify link opens in a new browser tab.',
+    },
+    {
+        id: 'status-persist',
+        label: 'Status update persists after refresh',
+        hint: 'Change a job status to "Applied" → refresh → verify the blue badge is still shown.',
+    },
+    {
+        id: 'status-filter',
+        label: 'Status filter works correctly',
+        hint: 'Set a job to "Applied" → use Status filter dropdown → only "Applied" jobs should show.',
+    },
+    {
+        id: 'digest-top10',
+        label: 'Digest generates top 10 by score',
+        hint: 'Generate digest → verify 10 jobs listed in descending match score order.',
+    },
+    {
+        id: 'digest-persist',
+        label: 'Digest persists for the day',
+        hint: 'Generate digest → refresh the page → verify the same digest loads without regenerating.',
+    },
+    {
+        id: 'no-console-errors',
+        label: 'No console errors on main pages',
+        hint: 'Open DevTools Console → navigate all pages → verify zero errors.',
+    },
+]
+
+const STORAGE_KEY = 'jobTrackerTestChecklist'
+
+function loadChecklist() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY)
+        if (raw) return JSON.parse(raw)
+    } catch { /* ignore */ }
+    return {}
+}
+
+function saveChecklist(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+}
+
 function Proof() {
-    const checklistItems = [
-        { id: 'ui', label: 'UI Built', description: 'All pages render with correct layout and styling.' },
-        { id: 'logic', label: 'Logic Working', description: 'Core functionality operates as expected.' },
-        { id: 'test', label: 'Test Passed', description: 'Key flows verified manually or via automated tests.' },
-        { id: 'deployed', label: 'Deployed', description: 'Live URL accessible and functional.' },
-    ]
+    const [checked, setChecked] = useState(() => loadChecklist())
+
+    const passedCount = useMemo(
+        () => TEST_ITEMS.filter(t => checked[t.id]).length,
+        [checked]
+    )
+
+    const allPassed = passedCount === TEST_ITEMS.length
+
+    const toggleItem = (id) => {
+        setChecked(prev => {
+            const next = { ...prev, [id]: !prev[id] }
+            saveChecklist(next)
+            return next
+        })
+    }
+
+    const resetAll = () => {
+        const empty = {}
+        saveChecklist(empty)
+        setChecked(empty)
+    }
 
     return (
         <div className="page-shell">
             <div className="page-header">
                 <h1 className="page-title">Proof</h1>
-                <p className="page-subtitle">Track build progress and collect evidence of completion.</p>
+                <p className="page-subtitle">Verify every feature works before you ship. No shortcuts.</p>
             </div>
             <div className="page-body">
-                <div className="proof-section">
-                    <h3 className="form-section-title">Build Checklist</h3>
-                    <p className="form-section-desc">
-                        Each milestone requires verification before marking complete.
-                        Proof artifacts will be collected in a future step.
-                    </p>
-
-                    <div className="proof-checklist">
-                        {checklistItems.map(item => (
-                            <div className="proof-checklist-item" key={item.id} id={`proof-${item.id}`}>
-                                <div className="proof-checklist-checkbox">
-                                    <div className="proof-checklist-box"></div>
-                                </div>
-                                <div className="proof-checklist-content">
-                                    <div className="proof-checklist-label">{item.label}</div>
-                                    <div className="proof-checklist-desc">{item.description}</div>
-                                </div>
-                                <div className="proof-checklist-status">
-                                    <span className="badge badge-neutral">Pending</span>
-                                </div>
-                            </div>
-                        ))}
+                {/* Test Result Summary */}
+                <div className={`test-summary ${allPassed ? 'test-summary--pass' : ''}`} id="test-summary">
+                    <div className="test-summary-score">
+                        <span className="test-summary-number">{passedCount}</span>
+                        <span className="test-summary-divider">/</span>
+                        <span className="test-summary-total">{TEST_ITEMS.length}</span>
+                    </div>
+                    <div className="test-summary-info">
+                        <h3 className="test-summary-title">
+                            {allPassed ? 'All tests passed' : 'Tests Passed'}
+                        </h3>
+                        <p className="test-summary-text">
+                            {allPassed
+                                ? 'Your application is ready to ship.'
+                                : 'Resolve all issues before shipping.'
+                            }
+                        </p>
                     </div>
                 </div>
 
-                <div className="proof-section">
-                    <h3 className="form-section-title">Artifacts</h3>
-                    <p className="form-section-desc">
-                        Screenshots, recordings, and test results will be uploaded here.
-                    </p>
-                    <div className="empty-state-card empty-state-card--compact">
-                        <div className="empty-state-icon-wrap">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="6" y="10" width="28" height="20" rx="3" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                                <path d="M20 17v6M17 20h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
+                {/* Progress Bar */}
+                <div className="test-progress-bar">
+                    <div
+                        className="test-progress-fill"
+                        style={{ width: `${(passedCount / TEST_ITEMS.length) * 100}%` }}
+                    ></div>
+                </div>
+
+                {/* Test Checklist */}
+                <div className="test-checklist" id="test-checklist">
+                    {TEST_ITEMS.map((item, idx) => (
+                        <div
+                            className={`test-item ${checked[item.id] ? 'test-item--checked' : ''}`}
+                            key={item.id}
+                            id={`test-${item.id}`}
+                        >
+                            <button
+                                className="test-item-checkbox"
+                                onClick={() => toggleItem(item.id)}
+                                aria-label={`Toggle ${item.label}`}
+                            >
+                                {checked[item.id] ? (
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <rect x="1" y="1" width="16" height="16" rx="4" fill="currentColor" stroke="currentColor" strokeWidth="1" />
+                                        <path d="M5 9l3 3 5-6" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                ) : (
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <rect x="1" y="1" width="16" height="16" rx="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                                    </svg>
+                                )}
+                            </button>
+                            <div className="test-item-content">
+                                <div className="test-item-row">
+                                    <span className="test-item-index">{idx + 1}.</span>
+                                    <span className={`test-item-label ${checked[item.id] ? 'test-item-label--done' : ''}`}>
+                                        {item.label}
+                                    </span>
+                                </div>
+                                <p className="test-item-hint">{item.hint}</p>
+                            </div>
                         </div>
-                        <h3 className="empty-state-title">No artifacts yet</h3>
-                        <p className="empty-state-text">
-                            Artifact upload will be enabled in a future build step.
-                        </p>
-                    </div>
+                    ))}
+                </div>
+
+                {/* Reset button */}
+                <div className="test-actions">
+                    <button className="btn btn-secondary btn-sm" onClick={resetAll} id="btn-reset-tests">
+                        Reset Test Status
+                    </button>
+                </div>
+
+                {/* Ship Lock */}
+                <div className={`ship-card ${allPassed ? 'ship-card--unlocked' : 'ship-card--locked'}`} id="ship-card">
+                    {allPassed ? (
+                        <>
+                            <div className="ship-card-icon ship-card-icon--unlock">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                    <rect x="8" y="18" width="24" height="16" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                                    <path d="M14 18v-5a6 6 0 0112 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                                    <circle cx="20" cy="27" r="2" fill="currentColor" />
+                                </svg>
+                            </div>
+                            <h3 className="ship-card-title">Ready to Ship</h3>
+                            <p className="ship-card-text">
+                                All {TEST_ITEMS.length} tests passed. Your Job Notification Tracker is verified and ready for production.
+                            </p>
+                            <a
+                                className="btn btn-primary"
+                                href="https://mukeshchettyd.github.io/kodnest-premium-build-system/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View Deployed App
+                            </a>
+                        </>
+                    ) : (
+                        <>
+                            <div className="ship-card-icon ship-card-icon--lock">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                    <rect x="8" y="18" width="24" height="16" rx="3" stroke="currentColor" strokeWidth="1.5" />
+                                    <path d="M14 18v-5a6 6 0 0112 0v5" stroke="currentColor" strokeWidth="1.5" />
+                                    <circle cx="20" cy="27" r="2" fill="currentColor" />
+                                </svg>
+                            </div>
+                            <h3 className="ship-card-title">Ship Locked</h3>
+                            <p className="ship-card-text">
+                                Complete all {TEST_ITEMS.length} tests above to unlock shipping.
+                                {passedCount > 0 && ` ${TEST_ITEMS.length - passedCount} remaining.`}
+                            </p>
+                            <button className="btn btn-primary" disabled>
+                                Ship Application
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

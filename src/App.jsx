@@ -10,6 +10,7 @@ import Proof from './pages/Proof'
 import './styles/global.css'
 import './styles/components.css'
 import './styles/navigation.css'
+import './styles/pages.css'
 
 function App() {
   return (

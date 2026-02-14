@@ -1,4 +1,72 @@
+import { useState, useMemo } from 'react'
+import jobs from '../data/jobs'
+import JobCard from '../components/JobCard'
+import JobModal from '../components/JobModal'
+import FilterBar from '../components/FilterBar'
+
 function Dashboard() {
+    const [selectedJob, setSelectedJob] = useState(null)
+    const [savedIds, setSavedIds] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('savedJobs')) || []
+        } catch {
+            return []
+        }
+    })
+
+    const [filters, setFilters] = useState({
+        keyword: '',
+        location: '',
+        mode: '',
+        experience: '',
+        source: '',
+        sort: 'latest',
+    })
+
+    const toggleSave = (id) => {
+        setSavedIds(prev => {
+            const next = prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+            localStorage.setItem('savedJobs', JSON.stringify(next))
+            return next
+        })
+    }
+
+    const filteredJobs = useMemo(() => {
+        let result = [...jobs]
+
+        if (filters.keyword) {
+            const kw = filters.keyword.toLowerCase()
+            result = result.filter(j =>
+                j.title.toLowerCase().includes(kw) ||
+                j.company.toLowerCase().includes(kw)
+            )
+        }
+
+        if (filters.location) {
+            result = result.filter(j => j.location === filters.location)
+        }
+
+        if (filters.mode) {
+            result = result.filter(j => j.mode === filters.mode)
+        }
+
+        if (filters.experience) {
+            result = result.filter(j => j.experience === filters.experience)
+        }
+
+        if (filters.source) {
+            result = result.filter(j => j.source === filters.source)
+        }
+
+        if (filters.sort === 'latest') {
+            result.sort((a, b) => a.postedDaysAgo - b.postedDaysAgo)
+        } else {
+            result.sort((a, b) => b.postedDaysAgo - a.postedDaysAgo)
+        }
+
+        return result
+    }, [filters])
+
     return (
         <div className="page-shell">
             <div className="page-header">
@@ -6,22 +74,43 @@ function Dashboard() {
                 <p className="page-subtitle">Your matched jobs appear here, refreshed daily.</p>
             </div>
             <div className="page-body">
-                <div className="empty-state-card">
-                    <div className="empty-state-icon-wrap">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="8" y="12" width="32" height="24" rx="3" stroke="currentColor" strokeWidth="1.5" fill="none" />
-                            <path d="M8 18h32" stroke="currentColor" strokeWidth="1.5" />
-                            <rect x="12" y="22" width="10" height="3" rx="1" fill="currentColor" opacity="0.2" />
-                            <rect x="12" y="28" width="16" height="3" rx="1" fill="currentColor" opacity="0.2" />
-                        </svg>
-                    </div>
-                    <h3 className="empty-state-title">No jobs yet</h3>
-                    <p className="empty-state-text">
-                        In the next step, you will load a realistic dataset.
-                        Matched positions will appear here as clean, scannable cards.
-                    </p>
+                <FilterBar
+                    filters={filters}
+                    onFilterChange={setFilters}
+                    jobCount={filteredJobs.length}
+                />
+
+                <div className="job-grid">
+                    {filteredJobs.map(job => (
+                        <JobCard
+                            key={job.id}
+                            job={job}
+                            onView={setSelectedJob}
+                            onSave={toggleSave}
+                            isSaved={savedIds.includes(job.id)}
+                        />
+                    ))}
                 </div>
+
+                {filteredJobs.length === 0 && (
+                    <div className="empty-state-card">
+                        <div className="empty-state-icon-wrap">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                <circle cx="24" cy="20" r="10" stroke="currentColor" strokeWidth="1.5" />
+                                <path d="M31 27l8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                            </svg>
+                        </div>
+                        <h3 className="empty-state-title">No matching jobs</h3>
+                        <p className="empty-state-text">
+                            Try adjusting your filters or broadening your search criteria.
+                        </p>
+                    </div>
+                )}
             </div>
+
+            {selectedJob && (
+                <JobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
+            )}
         </div>
     )
 }

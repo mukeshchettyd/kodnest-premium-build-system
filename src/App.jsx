@@ -11,6 +11,7 @@ import './styles/global.css'
 import './styles/components.css'
 import './styles/navigation.css'
 import './styles/pages.css'
+import './styles/jobs.css'
 
 function App() {
   return (

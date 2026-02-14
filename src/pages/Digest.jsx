@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import jobs from '../data/jobs'
 import { computeMatchScore, loadPreferences } from '../utils/matchEngine'
+import { getRecentStatusUpdates, getStatusBadgeClass } from '../utils/statusEngine'
 
 function getTodayKey() {
     const d = new Date()
@@ -54,6 +55,17 @@ function digestToPlainText(digestJobs, dateStr) {
     return text
 }
 
+function formatRelativeTime(isoStr) {
+    const diff = Date.now() - new Date(isoStr).getTime()
+    const mins = Math.floor(diff / 60000)
+    if (mins < 1) return 'Just now'
+    if (mins < 60) return `${mins}m ago`
+    const hrs = Math.floor(mins / 60)
+    if (hrs < 24) return `${hrs}h ago`
+    const days = Math.floor(hrs / 24)
+    return `${days}d ago`
+}
+
 function Digest() {
     const preferences = useMemo(() => loadPreferences(), [])
     const todayKey = getTodayKey()
@@ -68,6 +80,14 @@ function Digest() {
     })
 
     const [copied, setCopied] = useState(false)
+
+    const recentUpdates = useMemo(() => {
+        const updates = getRecentStatusUpdates(10)
+        return updates.map(u => {
+            const job = jobs.find(j => j.id === u.jobId)
+            return { ...u, job }
+        }).filter(u => u.job)
+    }, [])
 
     const generateDigest = useCallback(() => {
         const topJobs = buildDigestJobs(preferences)
@@ -205,8 +225,8 @@ function Digest() {
                                                 <div className="digest-item-top">
                                                     <h4 className="digest-item-title">{job.title}</h4>
                                                     <span className={`score-badge score-badge--${job.matchScore >= 80 ? 'high' :
-                                                            job.matchScore >= 60 ? 'medium' :
-                                                                job.matchScore >= 40 ? 'low' : 'minimal'
+                                                        job.matchScore >= 60 ? 'medium' :
+                                                            job.matchScore >= 40 ? 'low' : 'minimal'
                                                         }`}>
                                                         {job.matchScore}%
                                                     </span>
@@ -242,6 +262,29 @@ function Digest() {
                             </div>
                         </div>
                     </>
+                )}
+
+                {/* Recent Status Updates */}
+                {recentUpdates.length > 0 && (
+                    <div className="status-updates-section">
+                        <h3 className="status-updates-title">Recent Status Updates</h3>
+                        <div className="status-updates-card">
+                            {recentUpdates.map((u, idx) => (
+                                <div className="status-update-item" key={`${u.jobId}-${idx}`}>
+                                    <div className="status-update-info">
+                                        <div className="status-update-job">{u.job.title}</div>
+                                        <div className="status-update-company">{u.job.company}</div>
+                                    </div>
+                                    <div className="status-update-right">
+                                        <span className={`status-btn ${getStatusBadgeClass(u.status)}`} style={{ cursor: 'default', fontSize: '11px' }}>
+                                            {u.status}
+                                        </span>
+                                        <span className="status-update-date">{formatRelativeTime(u.updatedAt)}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 )}
             </div>
         </div>

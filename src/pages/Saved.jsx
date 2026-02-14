@@ -1,10 +1,16 @@
-import { useState } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import jobs from '../data/jobs'
 import JobCard from '../components/JobCard'
 import JobModal from '../components/JobModal'
+import Toast from '../components/Toast'
+import { computeMatchScore, loadPreferences } from '../utils/matchEngine'
+import { getAllStatuses, setJobStatus } from '../utils/statusEngine'
 
 function Saved() {
     const [selectedJob, setSelectedJob] = useState(null)
+    const [toastMsg, setToastMsg] = useState(null)
+    const [statusVersion, setStatusVersion] = useState(0)
+
     const [savedIds, setSavedIds] = useState(() => {
         try {
             return JSON.parse(localStorage.getItem('savedJobs')) || []
@@ -13,15 +19,37 @@ function Saved() {
         }
     })
 
-    const savedJobs = jobs.filter(j => savedIds.includes(j.id))
+    const preferences = useMemo(() => loadPreferences(), [])
+    const allStatuses = useMemo(() => getAllStatuses(), [statusVersion])
 
-    const toggleSave = (id) => {
+    const savedJobs = useMemo(() => {
+        return jobs
+            .filter(j => savedIds.includes(j.id))
+            .map(job => {
+                const result = computeMatchScore(job, preferences)
+                return {
+                    ...job,
+                    matchScore: result ? result.score : null,
+                    matchBreakdown: result ? result.breakdown : [],
+                }
+            })
+    }, [savedIds, preferences])
+
+    const toggleSave = useCallback((id) => {
         setSavedIds(prev => {
             const next = prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
             localStorage.setItem('savedJobs', JSON.stringify(next))
             return next
         })
-    }
+    }, [])
+
+    const handleStatusChange = useCallback((jobId, status) => {
+        setJobStatus(jobId, status)
+        setStatusVersion(v => v + 1)
+        if (status !== 'Not Applied') {
+            setToastMsg(`Status updated: ${status}`)
+        }
+    }, [])
 
     return (
         <div className="page-shell">
@@ -42,6 +70,10 @@ function Saved() {
                                 onView={setSelectedJob}
                                 onSave={toggleSave}
                                 isSaved={true}
+                                matchScore={job.matchScore}
+                                matchBreakdown={job.matchBreakdown}
+                                jobStatus={allStatuses[job.id]?.status || 'Not Applied'}
+                                onStatusChange={handleStatusChange}
                             />
                         ))}
                     </div>
@@ -64,6 +96,10 @@ function Saved() {
 
             {selectedJob && (
                 <JobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
+            )}
+
+            {toastMsg && (
+                <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
             )}
         </div>
     )

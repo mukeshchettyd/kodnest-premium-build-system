@@ -4,11 +4,16 @@ import jobs from '../data/jobs'
 import JobCard from '../components/JobCard'
 import JobModal from '../components/JobModal'
 import FilterBar from '../components/FilterBar'
+import Toast from '../components/Toast'
 import { computeMatchScore, loadPreferences, extractSalaryNumeric } from '../utils/matchEngine'
+import { getAllStatuses, setJobStatus, getJobStatus } from '../utils/statusEngine'
 
 function Dashboard() {
     const [selectedJob, setSelectedJob] = useState(null)
     const [showOnlyMatches, setShowOnlyMatches] = useState(false)
+    const [toastMsg, setToastMsg] = useState(null)
+    const [statusVersion, setStatusVersion] = useState(0)
+
     const [savedIds, setSavedIds] = useState(() => {
         try {
             return JSON.parse(localStorage.getItem('savedJobs')) || []
@@ -23,10 +28,14 @@ function Dashboard() {
         mode: '',
         experience: '',
         source: '',
+        status: '',
         sort: 'latest',
     })
 
     const preferences = useMemo(() => loadPreferences(), [])
+
+    // Re-read statuses whenever statusVersion bumps
+    const allStatuses = useMemo(() => getAllStatuses(), [statusVersion])
 
     const toggleSave = useCallback((id) => {
         setSavedIds(prev => {
@@ -34,6 +43,14 @@ function Dashboard() {
             localStorage.setItem('savedJobs', JSON.stringify(next))
             return next
         })
+    }, [])
+
+    const handleStatusChange = useCallback((jobId, status) => {
+        setJobStatus(jobId, status)
+        setStatusVersion(v => v + 1)
+        if (status !== 'Not Applied') {
+            setToastMsg(`Status updated: ${status}`)
+        }
     }, [])
 
     const scoredJobs = useMemo(() => {
@@ -50,7 +67,6 @@ function Dashboard() {
     const filteredJobs = useMemo(() => {
         let result = [...scoredJobs]
 
-        // Keyword filter (AND)
         if (filters.keyword) {
             const kw = filters.keyword.toLowerCase()
             result = result.filter(j =>
@@ -59,24 +75,28 @@ function Dashboard() {
             )
         }
 
-        // Location filter (AND)
         if (filters.location) {
             result = result.filter(j => j.location === filters.location)
         }
 
-        // Mode filter (AND)
         if (filters.mode) {
             result = result.filter(j => j.mode === filters.mode)
         }
 
-        // Experience filter (AND)
         if (filters.experience) {
             result = result.filter(j => j.experience === filters.experience)
         }
 
-        // Source filter (AND)
         if (filters.source) {
             result = result.filter(j => j.source === filters.source)
+        }
+
+        // Status filter (AND)
+        if (filters.status) {
+            result = result.filter(j => {
+                const s = allStatuses[j.id]?.status || 'Not Applied'
+                return s === filters.status
+            })
         }
 
         // Match threshold filter
@@ -97,7 +117,7 @@ function Dashboard() {
         }
 
         return result
-    }, [scoredJobs, filters, showOnlyMatches, preferences])
+    }, [scoredJobs, filters, showOnlyMatches, preferences, allStatuses])
 
     const hasPreferences = preferences !== null
 
@@ -108,7 +128,6 @@ function Dashboard() {
                 <p className="page-subtitle">Your matched jobs appear here, refreshed daily.</p>
             </div>
             <div className="page-body">
-                {/* Preferences Banner */}
                 {!hasPreferences && (
                     <div className="prefs-banner" id="prefs-banner">
                         <div className="prefs-banner-content">
@@ -125,7 +144,6 @@ function Dashboard() {
                     </div>
                 )}
 
-                {/* Filter Bar with Match Toggle */}
                 <FilterBar
                     filters={filters}
                     onFilterChange={setFilters}
@@ -135,7 +153,6 @@ function Dashboard() {
                     onToggleMatches={() => setShowOnlyMatches(prev => !prev)}
                 />
 
-                {/* Job Grid */}
                 <div className="job-grid">
                     {filteredJobs.map(job => (
                         <JobCard
@@ -146,11 +163,12 @@ function Dashboard() {
                             isSaved={savedIds.includes(job.id)}
                             matchScore={job.matchScore}
                             matchBreakdown={job.matchBreakdown}
+                            jobStatus={allStatuses[job.id]?.status || 'Not Applied'}
+                            onStatusChange={handleStatusChange}
                         />
                     ))}
                 </div>
 
-                {/* Empty states */}
                 {filteredJobs.length === 0 && (
                     <div className="empty-state-card">
                         <div className="empty-state-icon-wrap">
@@ -174,6 +192,10 @@ function Dashboard() {
 
             {selectedJob && (
                 <JobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
+            )}
+
+            {toastMsg && (
+                <Toast message={toastMsg} onDone={() => setToastMsg(null)} />
             )}
         </div>
     )

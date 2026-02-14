@@ -76,6 +76,14 @@ function FilterBar({ filters, onFilterChange, jobCount, hasPreferences, showOnly
                     <option value="Indeed">Indeed</option>
                 </select>
 
+                <select className="filter-select" id="filter-status" name="status" value={filters.status} onChange={handleChange}>
+                    <option value="">All Statuses</option>
+                    <option value="Not Applied">Not Applied</option>
+                    <option value="Applied">Applied</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Selected">Selected</option>
+                </select>
+
                 <select className="filter-select" id="filter-sort" name="sort" value={filters.sort} onChange={handleChange}>
                     <option value="latest">Latest First</option>
                     <option value="oldest">Oldest First</option>

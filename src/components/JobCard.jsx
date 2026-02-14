@@ -1,6 +1,11 @@
+import { useState, useRef, useEffect } from 'react'
 import { getScoreTier } from '../utils/matchEngine'
+import { VALID_STATUSES, getStatusBadgeClass } from '../utils/statusEngine'
 
-function JobCard({ job, onView, onSave, isSaved, matchScore, matchBreakdown }) {
+function JobCard({ job, onView, onSave, isSaved, matchScore, matchBreakdown, jobStatus, onStatusChange }) {
+    const [dropdownOpen, setDropdownOpen] = useState(false)
+    const dropRef = useRef(null)
+
     const daysLabel = job.postedDaysAgo === 0
         ? 'Today'
         : job.postedDaysAgo === 1
@@ -13,7 +18,28 @@ function JobCard({ job, onView, onSave, isSaved, matchScore, matchBreakdown }) {
             ? 'badge-warning'
             : 'badge-neutral'
 
-    const scoreTier = matchScore !== null ? getScoreTier(matchScore) : null
+    const scoreTier = matchScore !== null && matchScore !== undefined ? getScoreTier(matchScore) : null
+    const currentStatus = jobStatus || 'Not Applied'
+    const statusBadgeClass = getStatusBadgeClass(currentStatus)
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        if (!dropdownOpen) return
+        const handleClick = (e) => {
+            if (dropRef.current && !dropRef.current.contains(e.target)) {
+                setDropdownOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClick)
+        return () => document.removeEventListener('mousedown', handleClick)
+    }, [dropdownOpen])
+
+    const handleStatusSelect = (status) => {
+        setDropdownOpen(false)
+        if (status !== currentStatus && onStatusChange) {
+            onStatusChange(job.id, status)
+        }
+    }
 
     return (
         <div className="job-card" id={`job-card-${job.id}`}>
@@ -67,6 +93,37 @@ function JobCard({ job, onView, onSave, isSaved, matchScore, matchBreakdown }) {
                     >
                         Apply
                     </a>
+                </div>
+            </div>
+
+            {/* Status Row */}
+            <div className="job-card-status-row">
+                <span className="job-card-status-label">Status</span>
+                <div className="status-selector" ref={dropRef}>
+                    <button
+                        className={`status-btn ${statusBadgeClass}`}
+                        onClick={() => setDropdownOpen(prev => !prev)}
+                        aria-expanded={dropdownOpen}
+                        aria-haspopup="listbox"
+                    >
+                        {currentStatus}
+                        <svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </button>
+                    {dropdownOpen && (
+                        <div className="status-dropdown" role="listbox">
+                            {VALID_STATUSES.map(s => (
+                                <button
+                                    key={s}
+                                    className={`status-option ${s === currentStatus ? 'status-option--active' : ''}`}
+                                    role="option"
+                                    aria-selected={s === currentStatus}
+                                    onClick={() => handleStatusSelect(s)}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

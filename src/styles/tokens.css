@@ -1,73 +1,98 @@
 /* ========================================================================
    KodNest Premium Build System — Design Tokens
+   ========================================================================
+   Philosophy: Calm, Intentional, Coherent, Confident
+   Max 4 semantic colors + neutrals. Strict spacing scale.
+   No gradients. No glassmorphism. No neon. No animation noise.
    ======================================================================== */
 
 :root {
-  /* ---- Colors (max 4 + neutrals) ---- */
-  --color-bg:          #F7F6F3;
-  --color-text:        #111111;
-  --color-accent:      #8B0000;
-  --color-accent-hover:#6E0000;
-  --color-success:     #3B7A57;
-  --color-warning:     #B8860B;
+  /* ---- Colors (4 semantic + neutrals) ---- */
+  --color-bg: #F7F6F3;
+  /* off-white background           */
+  --color-text: #111111;
+  /* primary text                   */
+  --color-accent: #8B0000;
+  /* deep red accent                */
+  --color-accent-hover: #6E0000;
+  /* accent hover                   */
+  --color-success: #3B7A57;
+  /* muted green                    */
+  --color-warning: #B8860B;
+  /* muted amber                    */
 
-  --color-border:      #D6D3CC;
-  --color-border-focus:#111111;
-  --color-muted:       #6B6B6B;
-  --color-card-bg:     #FFFFFF;
-  --color-input-bg:    #FFFFFF;
-  --color-panel-bg:    #F0EFEB;
-  --color-footer-bg:   #EEEDEA;
-  --color-topbar-bg:   #FFFFFF;
+  --color-border: #D6D3CC;
+  --color-border-focus: #111111;
+  --color-muted: #6B6B6B;
+  --color-card-bg: #FFFFFF;
+  --color-input-bg: #FFFFFF;
+  --color-panel-bg: #F0EFEB;
+  --color-footer-bg: #EEEDEA;
+  --color-topbar-bg: #FFFFFF;
 
   /* ---- Typography ---- */
-  --font-heading:  'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono:     'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 
-  --text-xs:   0.75rem;   /* 12px */
-  --text-sm:   0.875rem;  /* 14px */
-  --text-base: 1rem;      /* 16px */
-  --text-md:   1.125rem;  /* 18px */
-  --text-lg:   1.25rem;   /* 20px */
-  --text-xl:   1.5rem;    /* 24px */
-  --text-2xl:  2rem;      /* 32px */
-  --text-3xl:  2.5rem;    /* 40px */
+  --text-xs: 0.75rem;
+  /* 12px */
+  --text-sm: 0.875rem;
+  /* 14px */
+  --text-base: 1rem;
+  /* 16px */
+  --text-md: 1.125rem;
+  /* 18px */
+  --text-lg: 1.25rem;
+  /* 20px */
+  --text-xl: 1.5rem;
+  /* 24px */
+  --text-2xl: 2rem;
+  /* 32px */
+  --text-3xl: 2.5rem;
+  /* 40px */
 
-  --leading-tight:  1.3;
+  --leading-tight: 1.3;
   --leading-normal: 1.6;
-  --leading-loose:  1.8;
+  --leading-loose: 1.8;
 
   --tracking-tight: -0.02em;
   --tracking-normal: 0;
-  --tracking-wide:   0.04em;
+  --tracking-wide: 0.04em;
 
-  /* ---- Spacing (8px scale) ---- */
-  --space-4:   4px;
-  --space-8:   8px;
-  --space-12:  12px;
-  --space-16:  16px;
-  --space-24:  24px;
-  --space-32:  32px;
-  --space-40:  40px;
-  --space-48:  48px;
-  --space-64:  64px;
-  --space-80:  80px;
+  /* ---- Spacing (8px based scale) ----
+     Primary scale: 8, 16, 24, 40, 64
+     Permitted half-steps for fine control: 4, 12, 32, 48, 80
+     Never use arbitrary values like 13px, 27px, etc.
+     Whitespace is part of the design.
+   */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
 
   /* ---- Borders ---- */
-  --radius-sm:  4px;
-  --radius-md:  6px;
-  --radius-lg:  8px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   --border-width: 1px;
 
-  /* ---- Transitions ---- */
-  --transition-fast:   150ms ease-in-out;
+  /* ---- Transitions (150–200ms, ease-in-out only) ----
+     No bounce. No parallax. No spring. No stagger.
+   */
+  --transition-fast: 150ms ease-in-out;
   --transition-normal: 200ms ease-in-out;
 
   /* ---- Layout ---- */
   --max-text-width: 720px;
-  --sidebar-width:  30%;
-  --main-width:     70%;
-  --topbar-height:  56px;
-  --footer-height:  72px;
+  --sidebar-width: 30%;
+  --main-width: 70%;
+  --topbar-height: 56px;
+  --footer-height: 72px;
 }

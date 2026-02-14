@@ -1,0 +1,208 @@
+/* ========================================================================
+   Navigation & Route Shell Styles
+   ======================================================================== */
+
+/* ---- Navigation Bar ---- */
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background-color: var(--color-topbar-bg);
+    border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--topbar-height);
+    padding: 0 var(--space-32);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav-brand {
+    font-family: var(--font-heading);
+    font-size: var(--text-md);
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: var(--tracking-tight);
+    flex-shrink: 0;
+    transition: color var(--transition-fast);
+}
+
+.nav-brand:hover {
+    color: var(--color-accent);
+}
+
+/* ---- Nav Links (Desktop) ---- */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    height: var(--topbar-height);
+    padding: 0 var(--space-16);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-muted);
+    text-decoration: none;
+    letter-spacing: var(--tracking-wide);
+    border-bottom: 2px solid transparent;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.nav-link:hover {
+    color: var(--color-text);
+}
+
+.nav-link--active {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+}
+
+/* ---- Hamburger Button ---- */
+.nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    padding: var(--space-8);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 210;
+}
+
+.nav-hamburger-line {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-text);
+    border-radius: 1px;
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+    transform-origin: center;
+}
+
+.nav-hamburger-line.open:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.nav-hamburger-line.open:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-hamburger-line.open:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---- Mobile Overlay ---- */
+.nav-overlay {
+    display: none;
+}
+
+/* ---- Page Placeholder ---- */
+.page-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - var(--topbar-height));
+    padding: var(--space-64) var(--space-32);
+    text-align: center;
+}
+
+.page-placeholder-heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-16);
+    letter-spacing: var(--tracking-tight);
+}
+
+.page-placeholder-subtext {
+    font-size: var(--text-md);
+    color: var(--color-muted);
+    line-height: var(--leading-loose);
+    max-width: var(--max-text-width);
+}
+
+/* ---- App Layout Shell ---- */
+.app-layout {
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+/* ================================================================
+   RESPONSIVE — Mobile (< 768px)
+   ================================================================ */
+@media (max-width: 768px) {
+    .nav-hamburger {
+        display: flex;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: var(--topbar-height);
+        right: 0;
+        width: 260px;
+        height: calc(100vh - var(--topbar-height));
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        background-color: var(--color-topbar-bg);
+        border-left: var(--border-width) solid var(--color-border);
+        padding: var(--space-16) 0;
+        transform: translateX(100%);
+        transition: transform var(--transition-normal);
+        z-index: 205;
+        overflow-y: auto;
+    }
+
+    .nav-links--open {
+        transform: translateX(0);
+    }
+
+    .nav-link {
+        height: auto;
+        padding: var(--space-16) var(--space-24);
+        border-bottom: none;
+        border-left: 3px solid transparent;
+        font-size: var(--text-base);
+    }
+
+    .nav-link--active {
+        border-left-color: var(--color-accent);
+        background-color: rgba(139, 0, 0, 0.04);
+    }
+
+    .nav-overlay {
+        display: block;
+        position: fixed;
+        top: var(--topbar-height);
+        left: 0;
+        width: 100%;
+        height: calc(100vh - var(--topbar-height));
+        background-color: rgba(17, 17, 17, 0.3);
+        z-index: 200;
+    }
+
+    .page-placeholder-heading {
+        font-size: var(--text-2xl);
+    }
+
+    .nav-inner {
+        padding: 0 var(--space-16);
+    }
+}

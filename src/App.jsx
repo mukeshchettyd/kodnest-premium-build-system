@@ -13,7 +13,7 @@ import './styles/navigation.css'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/kodnest-premium-build-system">
       <div className="app-layout">
         <Navigation />
         <Routes>

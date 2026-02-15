@@ -7,6 +7,7 @@ const navItems = [
     { to: '/digest', label: 'Digest' },
     { to: '/settings', label: 'Settings' },
     { to: '/proof', label: 'Proof' },
+    { to: '/rb/01-problem', label: 'AI Resume Builder' },
 ]
 
 const BUILD_STEP_CHECKS = [

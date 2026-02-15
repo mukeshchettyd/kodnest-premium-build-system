@@ -6,6 +6,8 @@ import Saved from './pages/Saved'
 import Digest from './pages/Digest'
 import Settings from './pages/Settings'
 import Proof from './pages/Proof'
+import RbStep from './pages/RbStep'
+import RbProof from './pages/RbProof'
 
 import './styles/global.css'
 import './styles/components.css'
@@ -16,22 +18,32 @@ import './styles/scoring.css'
 import './styles/digest.css'
 import './styles/status.css'
 import './styles/proof.css'
+import './styles/rb.css'
 
 function App() {
   return (
     <BrowserRouter basename="/kodnest-premium-build-system">
-      <div className="app-layout">
-        <Navigation />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/saved" element={<Saved />} />
-          <Route path="/digest" element={<Digest />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/proof" element={<Proof />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+      <Routes>
+        {/* ===== Project 3 — AI Resume Builder (Build Track) ===== */}
+        <Route path="/rb/:slug" element={<RbStep />} />
+        <Route path="/rb/proof" element={<RbProof />} />
+
+        {/* ===== Project 1 — Job Notification Tracker ===== */}
+        <Route path="/*" element={
+          <div className="app-layout">
+            <Navigation />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/saved" element={<Saved />} />
+              <Route path="/digest" element={<Digest />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/proof" element={<Proof />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
+        } />
+      </Routes>
     </BrowserRouter>
   )
 }

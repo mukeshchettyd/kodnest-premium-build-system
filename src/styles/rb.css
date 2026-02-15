@@ -1,0 +1,426 @@
+/* ========================================================================
+   KodNest Premium — AI Resume Builder Build Track Styles
+   Project 3 Layout: Top bar, Context header, 70/30 Workspace, Proof footer
+   ======================================================================== */
+
+/* ================================================================
+   LAYOUT SHELL
+   ================================================================ */
+.rb-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+/* ================================================================
+   TOP BAR
+   ================================================================ */
+.rb-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background-color: var(--color-topbar-bg);
+    border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.rb-topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--topbar-height);
+    padding: 0 var(--space-32);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.rb-topbar-left {
+    flex-shrink: 0;
+}
+
+.rb-topbar-brand {
+    font-family: var(--font-heading);
+    font-size: var(--text-md);
+    font-weight: 700;
+    color: var(--color-text);
+    text-decoration: none;
+    letter-spacing: var(--tracking-tight);
+    transition: color var(--transition-fast);
+}
+
+.rb-topbar-brand:hover {
+    color: var(--color-accent);
+}
+
+.rb-topbar-center {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+}
+
+.rb-topbar-progress {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.rb-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+}
+
+/* ================================================================
+   CONTEXT HEADER
+   ================================================================ */
+.rb-context-header {
+    padding: var(--space-40) var(--space-32) var(--space-32);
+    border-bottom: var(--border-width) solid var(--color-border);
+    background-color: var(--color-card-bg);
+}
+
+.rb-context-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.rb-step-eyebrow {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-12);
+}
+
+.rb-step-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-8);
+}
+
+.rb-step-subtitle {
+    font-size: var(--text-md);
+    color: var(--color-muted);
+    line-height: var(--leading-loose);
+    max-width: var(--max-text-width);
+}
+
+/* ================================================================
+   WORKSPACE (70/30 SPLIT)
+   ================================================================ */
+.rb-workspace {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.rb-main {
+    flex: 0 0 70%;
+    border-right: var(--border-width) solid var(--color-border);
+    overflow-y: auto;
+}
+
+.rb-main-inner {
+    padding: var(--space-40) var(--space-32);
+    max-width: 800px;
+}
+
+.rb-section-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-8);
+}
+
+.rb-section-desc {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    line-height: var(--leading-loose);
+    max-width: var(--max-text-width);
+    margin-bottom: var(--space-24);
+}
+
+.rb-divider {
+    height: var(--border-width);
+    background-color: var(--color-border);
+    margin: var(--space-32) 0;
+}
+
+.rb-artifact-input {
+    margin-bottom: var(--space-16);
+}
+
+.rb-artifact-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: var(--leading-normal);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+}
+
+.rb-screenshot-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    margin-bottom: var(--space-32);
+}
+
+.rb-screenshot-input {
+    max-width: 320px;
+}
+
+/* Step navigation */
+.rb-step-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: var(--space-32);
+    border-top: var(--border-width) solid var(--color-border);
+    margin-top: var(--space-16);
+}
+
+/* ================================================================
+   SECONDARY PANEL (30%)
+   ================================================================ */
+.rb-panel {
+    flex: 0 0 30%;
+    background-color: var(--color-panel-bg);
+    overflow-y: auto;
+}
+
+.rb-panel-inner {
+    padding: var(--space-24);
+}
+
+.rb-copy-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.rb-lovable-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Feedback group */
+.rb-feedback-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.rb-feedback-group .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Mini step progress */
+.rb-mini-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+}
+
+.rb-mini-step {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-muted);
+    background-color: var(--color-card-bg);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+}
+
+.rb-mini-step--done {
+    background-color: rgba(59, 122, 87, 0.1);
+    border-color: var(--color-success);
+    color: var(--color-success);
+}
+
+.rb-mini-step--active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background-color: rgba(139, 0, 0, 0.06);
+}
+
+/* ================================================================
+   PROOF FOOTER
+   ================================================================ */
+.rb-proof-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    background-color: var(--color-footer-bg);
+    border-top: var(--border-width) solid var(--color-border);
+    padding: var(--space-12) var(--space-32);
+}
+
+.rb-proof-footer-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-12);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.rb-footer-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+    margin-right: var(--space-4);
+}
+
+.rb-footer-step {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--color-card-bg);
+    border: var(--border-width) solid var(--color-border);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.rb-footer-step-num {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-muted);
+}
+
+.rb-footer-step--done {
+    background-color: rgba(59, 122, 87, 0.1);
+    border-color: var(--color-success);
+}
+
+.rb-footer-step--done .rb-footer-step-num {
+    color: var(--color-success);
+}
+
+.rb-footer-step--active {
+    border-color: var(--color-accent);
+    background-color: rgba(139, 0, 0, 0.06);
+}
+
+.rb-footer-step--active .rb-footer-step-num {
+    color: var(--color-accent);
+}
+
+.rb-footer-step:hover {
+    border-color: var(--color-text);
+    transform: scale(1.08);
+}
+
+.rb-footer-proof-btn {
+    margin-left: auto;
+}
+
+.rb-footer-active-label {
+    margin-left: auto;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+}
+
+/* ================================================================
+   PROOF PAGE SPECIFIC
+   ================================================================ */
+.rb-proof-body {
+    max-width: 860px;
+}
+
+.rb-proof-back {
+    margin-top: var(--space-32);
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 900px) {
+    .rb-workspace {
+        flex-direction: column;
+    }
+
+    .rb-main {
+        flex: 1 1 100%;
+        border-right: none;
+    }
+
+    .rb-panel {
+        flex: 1 1 100%;
+        border-top: var(--border-width) solid var(--color-border);
+    }
+
+    .rb-main-inner {
+        padding: var(--space-24) var(--space-16);
+    }
+
+    .rb-panel-inner {
+        padding: var(--space-16);
+    }
+
+    .rb-topbar-center {
+        display: none;
+    }
+
+    .rb-context-header {
+        padding: var(--space-24) var(--space-16);
+    }
+
+    .rb-step-title {
+        font-size: var(--text-2xl);
+    }
+
+    .rb-proof-footer-inner {
+        flex-wrap: wrap;
+        gap: var(--space-8);
+    }
+
+    .rb-screenshot-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .rb-screenshot-input {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .rb-topbar-inner {
+        padding: 0 var(--space-16);
+    }
+
+    .rb-proof-footer {
+        padding: var(--space-8) var(--space-16);
+    }
+
+    .rb-footer-step {
+        width: 26px;
+        height: 26px;
+    }
+
+    .rb-footer-step-num {
+        font-size: 10px;
+    }
+}
